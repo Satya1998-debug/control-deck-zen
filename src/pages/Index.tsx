@@ -1,30 +1,34 @@
-import { ModernDashboardHeader } from "@/components/modern/ModernDashboardHeader";
-import { AssetOverviewGrid } from "@/components/modern/AssetOverviewGrid";
-import { LiveMonitoringPanel } from "@/components/modern/LiveMonitoringPanel";
-import { OperationsCenter } from "@/components/modern/OperationsCenter";
-import { SystemFlowDiagram } from "@/components/modern/SystemFlowDiagram";
+import { DigitalTwinSection } from "@/components/dashboard/DigitalTwinSection";
+import { DroneMissionsSection } from "@/components/dashboard/DroneMissionsSection";
+import { WorkOrdersSection } from "@/components/dashboard/WorkOrdersSection";
+import { ARRepairSection } from "@/components/dashboard/ARRepairSection";
+import { SwimLaneSection } from "@/components/dashboard/SwimLaneSection";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
-      <ModernDashboardHeader />
+    <div className="min-h-screen bg-background">
+      <DashboardHeader />
       
-      <main className="container mx-auto p-8 space-y-8">
-        {/* Asset Overview Cards */}
-        <AssetOverviewGrid />
+      <main className="container mx-auto p-6 space-y-6">
+        {/* Top Section - Digital Twin */}
+        <DigitalTwinSection />
         
-        {/* Live Monitoring and Operations */}
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
-          <div className="xl:col-span-3">
-            <LiveMonitoringPanel />
+        {/* Middle Section - Missions and Work Orders */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <DroneMissionsSection />
           </div>
-          <div className="xl:col-span-2">
-            <OperationsCenter />
+          <div>
+            <WorkOrdersSection />
           </div>
         </div>
         
-        {/* System Flow */}
-        <SystemFlowDiagram />
+        {/* Bottom Section - AR Repair */}
+        <ARRepairSection />
+        
+        {/* Event Flow */}
+        <SwimLaneSection />
       </main>
     </div>
   );
