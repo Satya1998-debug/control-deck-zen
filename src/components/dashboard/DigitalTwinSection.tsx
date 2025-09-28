@@ -138,7 +138,7 @@ export const DigitalTwinSection = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Card className="bg-secondary/30">
               <CardContent className="p-4">
-                <h4 className="font-semibold mb-2 text-status-warning">Ri1231sk (derived)</h4>
+                <h4 className="font-semibold mb-2 text-status-warning">Risk (derived)</h4>
                 <p className="text-sm text-muted-foreground mb-2">
                   {"Thresholds: T>85°C, V>3mm/s, A>0.8mm"}
                 </p>
