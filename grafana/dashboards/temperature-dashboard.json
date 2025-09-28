@@ -1,0 +1,265 @@
+{
+  "id": null,
+  "title": "Temperature Analytics Dashboard",
+  "tags": ["elasticsearch", "temperature", "control-deck"],
+  "style": "dark",
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Temperature Trends",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "elasticsearch-temperature"
+          },
+          "query": "*",
+          "alias": "Temperature 0",
+          "refId": "A",
+          "timeField": "timestamp",
+          "metrics": [
+            {
+              "type": "avg",
+              "field": "temperature_0",
+              "id": "1"
+            }
+          ],
+          "bucketAggs": [
+            {
+              "type": "date_histogram",
+              "field": "timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto"
+              }
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "elasticsearch-temperature"
+          },
+          "query": "*",
+          "alias": "Temperature 1",
+          "refId": "B",
+          "timeField": "timestamp",
+          "metrics": [
+            {
+              "type": "avg",
+              "field": "temperature_1",
+              "id": "1"
+            }
+          ],
+          "bucketAggs": [
+            {
+              "type": "date_histogram",
+              "field": "timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto"
+              }
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "celsius"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 2,
+      "title": "Humidity Levels",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "elasticsearch-temperature"
+          },
+          "query": "*",
+          "alias": "Humidity",
+          "refId": "A",
+          "timeField": "timestamp",
+          "metrics": [
+            {
+              "type": "avg",
+              "field": "humidity",
+              "id": "1"
+            }
+          ],
+          "bucketAggs": [
+            {
+              "type": "date_histogram",
+              "field": "timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto"
+              }
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      }
+    },
+    {
+      "id": 3,
+      "title": "Battery Status",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "elasticsearch",
+            "uid": "elasticsearch-temperature"
+          },
+          "query": "*",
+          "alias": "Battery Voltage",
+          "refId": "A",
+          "timeField": "timestamp",
+          "metrics": [
+            {
+              "type": "avg",
+              "field": "battery_v",
+              "id": "1"
+            }
+          ],
+          "bucketAggs": [
+            {
+              "type": "date_histogram",
+              "field": "timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "auto"
+              }
+            }
+          ]
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3.0
+              },
+              {
+                "color": "green",
+                "value": 3.5
+              }
+            ]
+          },
+          "unit": "volt"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 8
+      }
+    }
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "refresh": "30s",
+  "schemaVersion": 37,
+  "version": 1,
+  "uid": "elasticsearch-temperature",
+  "gnetId": null,
+  "description": "Dashboard for monitoring temperature, humidity, and battery data from Elasticsearch"
+}
