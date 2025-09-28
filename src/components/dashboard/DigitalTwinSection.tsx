@@ -6,7 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { MetricChart } from "@/components/dashboard/MetricChart";
 import { AlertCircle, CheckCircle2, Thermometer, Zap, Gauge, Activity, MessageCircle } from "lucide-react";
-
+import axios from "axios";
+import { TemperatureData, TemperatureApiResponse } from "@/types/temperatureApi";
 export const DigitalTwinSection = () => {
   const healthScore = 88;
 
@@ -20,27 +21,67 @@ export const DigitalTwinSection = () => {
   const [batteryValue, setBatteryValue] = useState<string>("--");
 
   const [isConnected, setIsConnected] = useState(false);
+  const [latestTemperatureData, setLatestTemperatureData] = useState<TemperatureData[]>([]);
+  const [lastFetchTime, setLastFetchTime] = useState<string>("");
 
+  // Function to fetch temperature data from backend
+  const fetchTemperatureData = async () => {
+    try {
+      const response = await axios.get<TemperatureApiResponse>('http://localhost:8000/api/temperature');
+      const data = response.data.data;
+      console.log(data);
+      
+      if (data && data.length > 0) {
+        setLatestTemperatureData(data);
+        setIsConnected(true);
+        setLastFetchTime(new Date().toLocaleTimeString());
+        
+        // Get the latest temperature reading
+        const latestReading = data[data.length - 1];
+        
+        // Update temperature values and charts
+        const temp1 = latestReading.temperature_1;
+        const temp0 = latestReading.temperature_0;
+        const batteryVoltage = latestReading.battery_v;
+        const humidity = latestReading.humidity;
+        
+        setTemperatureValue(`${temp1.toFixed(1)}°C`);
+        setBatteryValue(`${batteryVoltage.toFixed(2)}V`);
+        setVibrationValue(`${humidity.toFixed(1)}%`); // Using humidity as vibration for now
+        
+        // Update chart data (keep last 20 readings)
+        setTemperatureData(prev => {
+          const newData = [...prev, temp1].slice(-10);
+          return newData;
+        });
+        
+        setBatteryData(prev => {
+          const newData = [...prev, batteryVoltage * 100].slice(-10); // Convert to percentage scale
+          return newData;
+        });
+        
+        setVibrationData(prev => {
+          const newData = [...prev, humidity].slice(-10);
+          return newData;
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching temperature data:', error);
+      setIsConnected(false);
+    }
+  };
+
+  // Setup polling every 10 seconds
   useEffect(() => {
-    fetch("http://10.0.0.2:8000/api/temperature")
-      .then((res) => {
-        setIsConnected(res.ok);
-        return res.json();
-      })
-      .then((data) => {
-        if (data.metrics && Array.isArray(data.metrics) && data.metrics.length > 0) {
-          const temps = data.metrics.map((item: any) => item.temperature);
-          const vibes = data.metrics.map((item: any) => item.vibration);
-          const batteries = data.metrics.map((item: any) => item.battery);
-          setTemperatureData(temps);
-          setTemperatureValue(`${temps[temps.length - 1]}°C`);
-          setVibrationData(vibes);
-          setVibrationValue(`${vibes[vibes.length - 1]} mm/s`);
-          setBatteryData(batteries);
-          setBatteryValue(`${batteries[batteries.length - 1]}%`);
-        }
-      })
-      .catch(() => setIsConnected(false));
+    // Initial fetch
+    fetchTemperatureData();
+    
+    console.log(temperatureData);
+    // Set up interval for fetching every 10 seconds
+    const interval = setInterval(fetchTemperatureData, 1000);
+    
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const metrics = [
@@ -52,14 +93,14 @@ export const DigitalTwinSection = () => {
       color: "hsl(var(--chart-1))"
     },
     {
-      title: "Vibration",
+      title: "Humidity",
       value: vibrationValue,
       icon: Activity,
       data: vibrationData,
       color: "hsl(var(--chart-2))"
     },
     {
-      title: "Battery life",
+      title: "Battery Voltage",
       value: batteryValue,
       icon: Gauge,
       data: batteryData,
@@ -112,8 +153,14 @@ export const DigitalTwinSection = () => {
 
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Backend:</span>
-                {isConnected ? <Badge variant="destructive">up</Badge> : <Badge variant="destructive">down</Badge>
-                }
+                {isConnected ? (
+                  <>
+                    <Badge variant="default" className="bg-green-500">Connected</Badge>
+                    <span className="text-xs text-muted-foreground">Last: {lastFetchTime}</span>
+                  </>
+                ) : (
+                  <Badge variant="destructive">Disconnected</Badge>
+                )}
               </div>
             </div>
 

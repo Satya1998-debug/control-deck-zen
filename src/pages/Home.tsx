@@ -24,14 +24,14 @@ const Home: React.FC = () => {
   useEffect(() => {
     // Simulate 8 parking systems with different health statuses
     setSystems([
-      { id: "Aps1", name: "Parking System A", health: "healthy" },
-      { id: "Aps2", name: "Parking System B", health: "warning" },
-      { id: "Aps3", name: "Parking System C", health: "critical" },
-      { id: "Aps4", name: "Parking System D", health: "healthy" },
-      { id: "Aps5", name: "Parking System E", health: "warning" },
-      { id: "Aps6", name: "Parking System F", health: "healthy" },
-      { id: "Aps7", name: "Parking System G", health: "warning" },
-      { id: "Aps8", name: "Parking System H", health: "critical" },
+      { id: "APS1", name: "Parking System A", health: "healthy" },
+      { id: "APS2", name: "Parking System B", health: "warning" },
+      { id: "APS3", name: "Parking System C", health: "critical" },
+      { id: "APS4", name: "Parking System D", health: "healthy" },
+      { id: "APS5", name: "Parking System E", health: "warning" },
+      { id: "APS6", name: "Parking System F", health: "healthy" },
+      { id: "APS7", name: "Parking System G", health: "warning" },
+      { id: "APS8", name: "Parking System H", health: "critical" },
     ]);
     setLoading(false);
   }, []);

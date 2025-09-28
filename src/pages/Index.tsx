@@ -3,6 +3,7 @@ import { DroneMissionsSection } from "@/components/dashboard/DroneMissionsSectio
 import { WorkOrdersSection } from "@/components/dashboard/WorkOrdersSection";
 import { ARRepairSection } from "@/components/dashboard/ARRepairSection";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { TemperatureSection } from "@/components/dashboard/TemperatureSection";
 
 const Index = () => {
   return (
@@ -12,6 +13,9 @@ const Index = () => {
       <main className="container mx-auto p-6 space-y-6">
         {/* Top Section - Digital Twin */}
         <DigitalTwinSection />
+        
+        {/* Temperature Monitoring Section */}
+        <TemperatureSection />
         
         {/* Middle Section - Missions and Work Orders */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
