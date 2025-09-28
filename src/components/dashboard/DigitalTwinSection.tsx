@@ -14,16 +14,33 @@ export const DigitalTwinSection = () => {
   const [temperatureData, setTemperatureData] = useState<number[]>([]);
   const [temperatureValue, setTemperatureValue] = useState<string>("--");
 
+  const [vibrationData, setVibrationData] = useState<number[]>([]);
+  const [vibrationValue, setVibrationValue] = useState<string>("--");
+  const [batteryData, setBatteryData] = useState<number[]>([]);
+  const [batteryValue, setBatteryValue] = useState<string>("--");
+
+  const [isConnected, setIsConnected] = useState(false);
+
   useEffect(() => {
-    fetch("http://10.0.0.90:8000/api/temperature")
-      .then((res) => res.json())
+    fetch("http://10.0.0.2:8000/api/temperature")
+      .then((res) => {
+        setIsConnected(res.ok);
+        return res.json();
+      })
       .then((data) => {
-        if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-          const temps = data.data.map((item: any) => item.temperature);
+        if (data.metrics && Array.isArray(data.metrics) && data.metrics.length > 0) {
+          const temps = data.metrics.map((item: any) => item.temperature);
+          const vibes = data.metrics.map((item: any) => item.vibration);
+          const batteries = data.metrics.map((item: any) => item.battery);
           setTemperatureData(temps);
           setTemperatureValue(`${temps[temps.length - 1]}°C`);
+          setVibrationData(vibes);
+          setVibrationValue(`${vibes[vibes.length - 1]} mm/s`);
+          setBatteryData(batteries);
+          setBatteryValue(`${batteries[batteries.length - 1]}%`);
         }
-      });
+      })
+      .catch(() => setIsConnected(false));
   }, []);
 
   const metrics = [
@@ -36,16 +53,16 @@ export const DigitalTwinSection = () => {
     },
     {
       title: "Vibration",
-      value: "3.48 mm/s",
+      value: vibrationValue,
       icon: Activity,
-      data: [3.2, 3.4, 3.6, 3.5, 3.8, 3.7, 3.9, 3.6, 3.4, 3.5],
+      data: vibrationData,
       color: "hsl(var(--chart-2))"
     },
     {
       title: "Battery life",
-      value: "92%",
+      value: batteryValue,
       icon: Gauge,
-      data: [95, 94, 93, 92, 92, 91, 91, 92, 92, 92],
+      data: batteryData,
       color: "hsl(var(--chart-3))"
     }
   ];
@@ -53,7 +70,7 @@ export const DigitalTwinSection = () => {
   // Chat window state
   const [showChat, setShowChat] = useState(false);
   const [chatInput, setChatInput] = useState("");
-  const [chatMessages, setChatMessages] = useState<Array<{role: string; content: string}>>([]);
+  const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([]);
 
   // Dummy chatbot response
   const handleSend = () => {
@@ -73,7 +90,7 @@ export const DigitalTwinSection = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <CardTitle className="text-xl">Digital Twin</CardTitle>
-              
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Component</span>
                 <Select defaultValue="platform-a-1">
@@ -87,25 +104,26 @@ export const DigitalTwinSection = () => {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Mode:</span>
                 <Badge variant="outline" className="text-primary border-primary">Simulated</Badge>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Backend:</span>
-                <Badge variant="destructive">down</Badge>
+                {isConnected ? <Badge variant="destructive">up</Badge> : <Badge variant="destructive">down</Badge>
+                }
               </div>
             </div>
-            
+
             <div className="flex items-center gap-6">
               <div className="text-right">
                 <div className="text-2xl font-bold text-foreground">{healthScore}%</div>
                 <div className="text-sm text-muted-foreground">Health</div>
                 <Progress value={healthScore} className="w-20 mt-1" />
               </div>
-              
+
               <div className="text-right">
                 <div className="text-lg font-semibold text-status-warning flex items-center gap-2">
                   <AlertCircle className="h-4 w-4" />
@@ -116,7 +134,7 @@ export const DigitalTwinSection = () => {
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 justify-center items-stretch">
             {metrics.map((metric) => (
@@ -134,8 +152,40 @@ export const DigitalTwinSection = () => {
               </Card>
             ))}
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="bg-secondary/30">
+              <CardContent className="p-4">
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold mb-1">SLA</h4>
+                    <p className="text-xl font-bold text-status-operational">{"Twin < 5s"}</p>
+                    <p className="text-sm text-muted-foreground">{"Alert < 10s"}</p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <img
+                      src="/Gemini_Generated_Image_3rxp933rxp933rxp.png"
+                      alt="Inspection Drone"
+                      className="w-full max-h-64 object-cover rounded-lg border shadow"
+                      style={{ background: '#f8fafc' }}
+                    />
+                    <Button size="sm" className="bg-primary text-primary-foreground">
+                      Run drone inspection
+                    </Button>
+                    <Button size="sm" className="bg-primary text-primary-foreground">
+                      Run drone diagonse
+                    </Button>
+                  </div>
+
+                  <div>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Export test case JSON
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             <Card className="bg-secondary/30">
               <CardContent className="p-4">
                 <h4 className="font-semibold mb-2 text-status-warning">Risk (derived)</h4>
@@ -160,16 +210,16 @@ export const DigitalTwinSection = () => {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-secondary/30">
               <CardContent className="p-4">
                 <div className="space-y-4">
-                 
+
                   <div>
                     <h4 className="font-semibold mb-1">TTF Estimate</h4>
                     <p className="text-xl font-bold">71h</p>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-1">Ingestion Latency</h4>
                     <p className="text-xl font-bold">21ms</p>
@@ -177,30 +227,7 @@ export const DigitalTwinSection = () => {
                 </div>
               </CardContent>
             </Card>
-            
-            <Card className="bg-secondary/30">
-              <CardContent className="p-4">
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-1">SLA</h4>
-                    <p className="text-xl font-bold text-status-operational">{"Twin < 5s"}</p>
-                    <p className="text-sm text-muted-foreground">{"Alert < 10s"}</p>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button size="sm" className="bg-primary text-primary-foreground">
-                      Run drone inspection
-                    </Button>
-                  </div>
-                  
-                  <div>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Export test case JSON
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+
           </div>
         </CardContent>
       </Card>

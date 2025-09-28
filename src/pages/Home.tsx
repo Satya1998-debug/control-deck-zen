@@ -94,7 +94,6 @@ const Home: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-blue-950 flex flex-col items-center justify-center">
       <main className="container mx-auto p-6 flex flex-col items-center justify-center min-h-screen">
         {/* Inspection Section - Drone Image */}
-        <InspectionSection />
         <div className="flex flex-col items-center mb-10">
           <div className="bg-slate-800 rounded-full p-4 mb-4 shadow-lg flex items-center justify-center w-32 h-32 overflow-hidden">
             <img
