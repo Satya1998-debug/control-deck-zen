@@ -4,10 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetricChart } from "@/components/dashboard/MetricChart";
-import { AlertCircle, CheckCircle2, Thermometer, Zap, Gauge, Activity, MessageCircle } from "lucide-react";
+import { GrafanaAnalyticsSection } from "@/components/dashboard/GrafanaAnalyticsSection";
+import { AlertCircle, CheckCircle2, Thermometer, Zap, Gauge, Activity, MessageCircle, BarChart3 } from "lucide-react";
 import axios from "axios";
 import { TemperatureData, TemperatureApiResponse } from "@/types/temperatureApi";
+
 export const DigitalTwinSection = () => {
   const healthScore = 88;
 
@@ -30,36 +33,36 @@ export const DigitalTwinSection = () => {
       const response = await axios.get<TemperatureApiResponse>('http://localhost:8000/api/temperature');
       const data = response.data.data;
       console.log(data);
-      
+
       if (data && data.length > 0) {
         setLatestTemperatureData(data);
         setIsConnected(true);
         setLastFetchTime(new Date().toLocaleTimeString());
-        
+
         // Get the latest temperature reading
         const latestReading = data[data.length - 1];
-        
+
         // Update temperature values and charts
         const temp1 = latestReading.temperature_1;
         const temp0 = latestReading.temperature_0;
         const batteryVoltage = latestReading.battery_v;
         const humidity = latestReading.humidity;
-        
+
         setTemperatureValue(`${temp1.toFixed(1)}°C`);
         setBatteryValue(`${batteryVoltage.toFixed(2)}V`);
         setVibrationValue(`${humidity.toFixed(1)}%`); // Using humidity as vibration for now
-        
+
         // Update chart data (keep last 20 readings)
         setTemperatureData(prev => {
           const newData = [...prev, temp1].slice(-10);
           return newData;
         });
-        
+
         setBatteryData(prev => {
           const newData = [...prev, batteryVoltage * 100].slice(-10); // Convert to percentage scale
           return newData;
         });
-        
+
         setVibrationData(prev => {
           const newData = [...prev, humidity].slice(-10);
           return newData;
@@ -75,11 +78,11 @@ export const DigitalTwinSection = () => {
   useEffect(() => {
     // Initial fetch
     fetchTemperatureData();
-    
+
     console.log(temperatureData);
     // Set up interval for fetching every 10 seconds
     const interval = setInterval(fetchTemperatureData, 1000);
-    
+
     // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []);
@@ -123,159 +126,177 @@ export const DigitalTwinSection = () => {
     setChatInput("");
   };
 
-  // Floating Chat Button
   return (
     <>
       <Card className="shadow-lg">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <CardTitle className="text-xl">Digital Twin</CardTitle>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <CardTitle className="text-xl">Digital Twin & Analytics</CardTitle>
 
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Component</span>
-                <Select defaultValue="platform-a-1">
-                  <SelectTrigger className="w-40 h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="platform-a-1">Platform A-1</SelectItem>
-                    <SelectItem value="platform-b-1">Platform B-1</SelectItem>
-                    <SelectItem value="platform-c-1">Platform C-1</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Mode:</span>
-                <Badge variant="outline" className="text-primary border-primary">Simulated</Badge>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Backend:</span>
-                {isConnected ? (
-                  <>
-                    <Badge variant="default" className="bg-green-500">Connected</Badge>
-                    <span className="text-xs text-muted-foreground">Last: {lastFetchTime}</span>
-                  </>
-                ) : (
-                  <Badge variant="destructive">Disconnected</Badge>
-                )}
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Component</span>
+              <Select defaultValue="platform-a-1">
+                <SelectTrigger className="w-40 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="platform-a-1">Platform A-1</SelectItem>
+                  <SelectItem value="platform-b-1">Platform B-1</SelectItem>
+                  <SelectItem value="platform-c-1">Platform C-1</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="flex items-center gap-6">
-              <div className="text-right">
-                <div className="text-2xl font-bold text-foreground">{healthScore}%</div>
-                <div className="text-sm text-muted-foreground">Health</div>
-                <Progress value={healthScore} className="w-20 mt-1" />
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Mode:</span>
+              <Badge variant="outline" className="text-primary border-primary">Simulated</Badge>
+            </div>
 
-              <div className="text-right">
-                <div className="text-lg font-semibold text-status-warning flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4" />
-                  Live Alerts
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">3 active</div>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Backend:</span>
+              {isConnected ? (
+                <>
+                  <Badge variant="default" className="bg-green-500">Connected</Badge>
+                  <span className="text-xs text-muted-foreground">Last: {lastFetchTime}</span>
+                </>
+              ) : (
+                <Badge variant="destructive">Disconnected</Badge>
+              )}
             </div>
           </div>
-        </CardHeader>
 
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 justify-center items-stretch">
-            {metrics.map((metric) => (
-              <Card key={metric.title} className="bg-secondary/50">
+          <div className="flex items-center gap-6">
+            <div className="text-right">
+              <div className="text-2xl font-bold text-foreground">{healthScore}%</div>
+              <div className="text-sm text-muted-foreground">Health</div>
+              <Progress value={healthScore} className="w-20 mt-1" />
+            </div>
+
+            <div className="text-right">
+              <div className="text-lg font-semibold text-status-warning flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                Live Alerts
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">3 active</div>
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              System Overview
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Grafana Analytics
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 justify-center items-stretch">
+              {metrics.map((metric) => (
+                <Card key={metric.title} className="bg-secondary/50">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <metric.icon className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">{metric.title}</span>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold mb-3">{metric.value}</div>
+                    <MetricChart data={metric.data} color={metric.color} />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card className="bg-secondary/30">
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <metric.icon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">{metric.title}</span>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold mb-1">SLA</h4>
+                      <p className="text-xl font-bold text-status-operational">{"Twin < 5s"}</p>
+                      <p className="text-sm text-muted-foreground">{"Alert < 10s"}</p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <img
+                        src="/Gemini_Generated_Image_3rxp933rxp933rxp.png"
+                        alt="Inspection Drone"
+                        className="w-full max-h-64 object-cover rounded-lg border shadow"
+                        style={{ background: '#f8fafc' }}
+                      />
+                      <Button size="sm" className="bg-primary text-primary-foreground">
+                        Run drone inspection
+                      </Button>
+                      <Button size="sm" className="bg-primary text-primary-foreground">
+                        Run drone diagonse
+                      </Button>
+                    </div>
+
+                    <div>
+                      <Button variant="outline" size="sm" className="w-full">
+                        Export test case JSON
+                      </Button>
                     </div>
                   </div>
-                  <div className="text-2xl font-bold mb-3">{metric.value}</div>
-                  <MetricChart data={metric.data} color={metric.color} />
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              <Card className="bg-secondary/30">
+                <CardContent className="p-4">
+                  <h4 className="font-semibold mb-2 text-status-warning">Risk (derived)</h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {"Thresholds: T>85°C, V>3mm/s, A>0.8mm"}
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Temp fault</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" checked className="rounded accent-status-warning" />
+                      <span className="text-sm">Vibration fault</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Misalignment</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                  </div>
+                </CardContent>
+              </Card>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="bg-secondary/30">
-              <CardContent className="p-4">
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-1">SLA</h4>
-                    <p className="text-xl font-bold text-status-operational">{"Twin < 5s"}</p>
-                    <p className="text-sm text-muted-foreground">{"Alert < 10s"}</p>
-                  </div>
+              <Card className="bg-secondary/30">
+                <CardContent className="p-4">
+                  <div className="space-y-4">
 
-                  <div className="flex gap-2">
-                    <img
-                      src="/Gemini_Generated_Image_3rxp933rxp933rxp.png"
-                      alt="Inspection Drone"
-                      className="w-full max-h-64 object-cover rounded-lg border shadow"
-                      style={{ background: '#f8fafc' }}
-                    />
-                    <Button size="sm" className="bg-primary text-primary-foreground">
-                      Run drone inspection
-                    </Button>
-                    <Button size="sm" className="bg-primary text-primary-foreground">
-                      Run drone diagonse
-                    </Button>
-                  </div>
+                    <div>
+                      <h4 className="font-semibold mb-1">TTF Estimate</h4>
+                      <p className="text-xl font-bold">71h</p>
+                    </div>
 
-                  <div>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Export test case JSON
-                    </Button>
+                    <div>
+                      <h4 className="font-semibold mb-1">Ingestion Latency</h4>
+                      <p className="text-xl font-bold">21ms</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-secondary/30">
-              <CardContent className="p-4">
-                <h4 className="font-semibold mb-2 text-status-warning">Risk (derived)</h4>
-                <p className="text-sm text-muted-foreground mb-2">
-                  {"Thresholds: T>85°C, V>3mm/s, A>0.8mm"}
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" className="rounded" />
-                    <span className="text-sm">Temp fault</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" checked className="rounded accent-status-warning" />
-                    <span className="text-sm">Vibration fault</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" className="rounded" />
-                    <span className="text-sm">Misalignment</span>
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-4">
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card className="bg-secondary/30">
-              <CardContent className="p-4">
-                <div className="space-y-4">
+            </div>
+            </TabsContent>
 
-                  <div>
-                    <h4 className="font-semibold mb-1">TTF Estimate</h4>
-                    <p className="text-xl font-bold">71h</p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-1">Ingestion Latency</h4>
-                    <p className="text-xl font-bold">21ms</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-          </div>
+            <TabsContent value="analytics" className="mt-6">
+              <GrafanaAnalyticsSection />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
       {/* Floating Chat Button */}
