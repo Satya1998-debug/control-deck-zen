@@ -10,7 +10,6 @@ export const DroneMissionsSection = () => {
       id: "#1",
       status: "Completed",
       result: "No critical issues",
-      profile: "Indoor (VIO)",
       timestamp: "2 hours ago",
       location: "Building A - Level 3"
     },
@@ -18,7 +17,6 @@ export const DroneMissionsSection = () => {
       id: "#2", 
       status: "In Progress",
       result: "Thermal anomaly detected",
-      profile: "Outdoor (GPS)",
       timestamp: "45 minutes ago",
       location: "External Perimeter"
     },
@@ -26,7 +24,6 @@ export const DroneMissionsSection = () => {
       id: "#3",
       status: "Scheduled",
       result: "Pending execution",
-      profile: "Indoor (VIO)",
       timestamp: "In 30 minutes",
       location: "Building B - Rooftop"
     }
@@ -41,19 +38,7 @@ export const DroneMissionsSection = () => {
             Drone Missions
           </CardTitle>
           
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Profile:</span>
-            <Select defaultValue="indoor-vio">
-              <SelectTrigger className="w-32 h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="indoor-vio">Indoor (VIO)</SelectItem>
-                <SelectItem value="outdoor-gps">Outdoor (GPS)</SelectItem>
-                <SelectItem value="hybrid">Hybrid</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      
         </div>
       </CardHeader>
       
@@ -90,7 +75,6 @@ export const DroneMissionsSection = () => {
                     </p>
                     
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Profile: {mission.profile}</span>
                       <div className="flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
                         {mission.location}

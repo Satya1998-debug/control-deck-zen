@@ -84,39 +84,6 @@ export const WorkOrdersSection = () => {
         </CardContent>
       </Card>
 
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
-            Parts Inventory
-          </CardTitle>
-        </CardHeader>
-        
-        <CardContent>
-          <div className="space-y-2">
-            {inventoryItems.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-secondary/30">
-                <div>
-                  <p className="text-sm font-medium">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">Min: {item.minStock}</p>
-                </div>
-                <div className="text-right">
-                  <p className={`text-sm font-bold ${item.stock <= item.minStock ? 'text-status-warning' : 'text-foreground'}`}>
-                    {item.stock}
-                  </p>
-                  {item.stock <= item.minStock && (
-                    <AlertTriangle className="h-3 w-3 text-status-warning inline" />
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <Button variant="outline" size="sm" className="w-full mt-4">
-            Request Parts
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   );
 };

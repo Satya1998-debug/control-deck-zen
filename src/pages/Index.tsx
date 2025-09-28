@@ -2,7 +2,6 @@ import { DigitalTwinSection } from "@/components/dashboard/DigitalTwinSection";
 import { DroneMissionsSection } from "@/components/dashboard/DroneMissionsSection";
 import { WorkOrdersSection } from "@/components/dashboard/WorkOrdersSection";
 import { ARRepairSection } from "@/components/dashboard/ARRepairSection";
-import { SwimLaneSection } from "@/components/dashboard/SwimLaneSection";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 
 const Index = () => {
@@ -23,12 +22,9 @@ const Index = () => {
             <WorkOrdersSection />
           </div>
         </div>
-        
-        {/* Bottom Section - AR Repair */}
         <ARRepairSection />
         
-        {/* Event Flow */}
-        <SwimLaneSection />
+        {/* Bottom Section - AR Repair */}
       </main>
     </div>
   );

@@ -7,7 +7,7 @@ export const DashboardHeader = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Predictive Maintenance Control Center</h1>
+            <h1 className="text-2xl font-bold text-foreground">ParkIT Operations Hub</h1>
             <p className="text-muted-foreground mt-1">Digital Twin & Asset Monitoring</p>
           </div>
           
