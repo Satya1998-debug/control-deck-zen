@@ -30,18 +30,48 @@ export const DigitalTwinSection = () => {
   // Function to fetch temperature data from backend
   const fetchTemperatureData = async () => {
     try {
-      const response = await axios.get<TemperatureApiResponse>('http://localhost:8000/api/temperature');
-      const data = response.data.data; // Access the data array from the response
+      // const response = await axios.get<TemperatureApiResponse>('http://10.0.0.7:9200/api/temperature');
+      // const data = response.data;
       
-      console.log(data);
+      const data = [ {
+        "time": "2025-08-20 13:41:31.183000",
+        "principal": "A840419A595CB863",
+        "model_id": "Temperature Sensor",
+        "join_id": null,
+        "battery_v": 3.175,
+        "battery_status": "3",
+        "humidity": 40.4,
+        "temperature_0": 327.67,
+        "temperature_1": 32.12,
+        "received_at": "2025-08-20T13:41:30.950259015Z",
+        "source_file": "delivery_stream_temperatures_delivery_stream_s3-1-2025-08-20-13-41-31-92bb6d81-0d38-40b9-8ba7-0adb65730870.parquet",
+        "source_path": "E:\\Projects\\Ferianakadamie_2025\\data\\temperatures\\year=2025\\month=08\\day=20\\hour=13\\minute=41\\delivery_stream_temperatures_delivery_stream_s3-1-2025-08-20-13-41-31-92bb6d81-0d38-40b9-8ba7-0adb65730870.parquet"
+      },
+      {
+        "time": "2025-08-20 13:41:47.168000",
+        "principal": "A84041728D5CB85A",
+        "model_id": "Temperature Sensor",
+        "join_id": null,
+        "battery_v": 3.139,
+        "battery_status": "3",
+        "humidity": 40.7,
+        "temperature_0": 627.67,
+        "temperature_1": 31.88,
+        "received_at": "2025-08-20T13:41:46.872974568Z",
+        "source_file": "delivery_stream_temperatures_delivery_stream_s3-1-2025-08-20-13-41-31-92bb6d81-0d38-40b9-8ba7-0adb65730870.parquet",
+        "source_path": "E:\\Projects\\Ferianakadamie_2025\\data\\temperatures\\year=2025\\month=08\\day=20\\hour=13\\minute=41\\delivery_stream_temperatures_delivery_stream_s3-1-2025-08-20-13-41-31-92bb6d81-0d38-40b9-8ba7-0adb65730870.parquet"
+      }
+    ];
+    console.log(data);
       if (data && data.length > 0) {
+        // setLatestTemperatureData(data);
         setIsConnected(true);
         setLastFetchTime(new Date().toLocaleTimeString());
 
         // Get the latest temperature reading
         const latestReading = data[data.length - 1];
 
-        // Update temperature values with latest reading
+        // Update temperature values and charts
         const temp1 = latestReading.temperature_1;
         const temp0 = latestReading.temperature_0;
         const batteryVoltage = latestReading.battery_v;
@@ -51,15 +81,27 @@ export const DigitalTwinSection = () => {
         setBatteryValue(`${batteryVoltage.toFixed(2)}V`);
         setVibrationValue(`${humidity.toFixed(1)}%`); // Using humidity as vibration for now
 
-        // Extract all temperature values from the array (use temperature_1 for display)
-        const allTempValues = data.map(reading => reading.temperature_1);
-        const allBatteryValues = data.map(reading => reading.battery_v * 100);
-        const allHumidityValues = data.map(reading => reading.humidity);
+ // Extract all temperature values from the array and add them to chart data
+    const allTemp1Values = data.map(reading => reading.temperature_0);
+    const allBatteryValues = data.map(reading => reading.battery_v * 100);
+    const allHumidityValues = data.map(reading => reading.humidity);
 
-        // Replace chart data with all fetched values (keep last 10 readings)
-        setTemperatureData(allTempValues.slice(-10));
-        setBatteryData(allBatteryValues.slice(-10));
-        setVibrationData(allHumidityValues.slice(-10));
+    // Update chart data with all values (keep last 10 readings)
+    setTemperatureData(prev => {
+      const newData = [...prev, ...allTemp1Values].slice(-10);
+      return newData;
+    });
+    console.log(temperatureData);
+
+    setBatteryData(prev => {
+      const newData = [...prev, ...allBatteryValues].slice(-10);
+      return newData;
+    });
+
+    setVibrationData(prev => {
+      const newData = [...prev, ...allHumidityValues].slice(-10);
+      return newData;
+    });
       }
     } catch (error) {
       console.error('Error fetching temperature data:', error);
@@ -101,13 +143,6 @@ export const DigitalTwinSection = () => {
       icon: Gauge,
       data: batteryData,
       color: "hsl(var(--chart-3))"
-    },
-     {
-      title: "Vibration",
-      value: vibrationValue,
-      icon: Activity,
-      data: vibrationData,
-      color: "hsl(var(--chart-2))"
     }
   ];
 
@@ -130,7 +165,7 @@ export const DigitalTwinSection = () => {
     console.log("sdfasfasdf");
     
   try {
-    const response = await axios.get('http://localhost:8000/api/diagnose');
+    const response = await axios.post('http://10.0.0.7:9200/api/diagnose');
     console.log('Drone diagnose response:', response.data);
     // Handle success response here if needed
   } catch (error) {
@@ -203,10 +238,10 @@ export const DigitalTwinSection = () => {
               <Activity className="h-4 w-4" />
               System Overview
             </TabsTrigger>
-            {/* <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Grafana Analytics
-            </TabsTrigger> */}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
@@ -305,9 +340,9 @@ export const DigitalTwinSection = () => {
             </div>
             </TabsContent>
 
-            {/* <TabsContent value="analytics" className="mt-6">
+            <TabsContent value="analytics" className="mt-6">
               <GrafanaAnalyticsSection />
-            </TabsContent> */}
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
