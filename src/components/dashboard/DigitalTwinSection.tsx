@@ -277,24 +277,28 @@ export const DigitalTwinSection = ({ onCreateMission }: DigitalTwinSectionProps)
     if (!chatInput.trim() || isChatLoading) return;
     
     const userMessage = chatInput.trim();
+    console.log('Sending message:', userMessage); // Debug log
     
-    // Clear input field
-    setChatInput("");
-    
-    // Add user message to chat
+    // Add user message to chat first
     setChatMessages((msgs) => [...msgs, { 
       role: "user", 
       content: userMessage,
       timestamp: new Date().toLocaleTimeString()
     }]);
     
+    // Clear input field after capturing the message
+    setChatInput("");
     setIsChatLoading(true);
     
     try {
+      console.log('API Request payload:', { message: userMessage, user_query: userMessage }); // Debug log
+      
       const response = await axios.post('http://localhost:8000/api/mcp/chat', {
         message: userMessage,
         user_query: userMessage
       });
+      
+      console.log('API Response:', response.data); // Debug log
       
       // Add AI response to chat
       setChatMessages((msgs) => [...msgs, { 
@@ -310,8 +314,10 @@ export const DigitalTwinSection = ({ onCreateMission }: DigitalTwinSectionProps)
       
       if (axios.isAxiosError(error)) {
         if (error.response) {
+          console.error('Response error:', error.response.data); // Debug log
           errorMessage = `Error: ${error.response.data?.message || 'Server error'}`;
         } else if (error.request) {
+          console.error('Request error:', error.request); // Debug log
           errorMessage = 'Unable to connect to ParkIT AI. Please check your connection.';
         }
       }
@@ -954,7 +960,12 @@ export const DigitalTwinSection = ({ onCreateMission }: DigitalTwinSectionProps)
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleSend(); }}
+              onKeyDown={(e) => { 
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
               placeholder="Ask me about parking systems..."
               disabled={isChatLoading}
             />
