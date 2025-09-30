@@ -4,31 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle2, Clock, MapPin, Plane } from "lucide-react";
 
-export const DroneMissionsSection = () => {
-  const missions = [
-    {
-      id: "#1",
-      status: "Completed",
-      result: "No critical issues",
-      timestamp: "2 hours ago",
-      location: "Building A - Level 3"
-    },
-    {
-      id: "#2", 
-      status: "In Progress",
-      result: "Thermal anomaly detected",
-      timestamp: "45 minutes ago",
-      location: "External Perimeter"
-    },
-    {
-      id: "#3",
-      status: "Scheduled",
-      result: "Pending execution",
-      timestamp: "In 30 minutes",
-      location: "Building B - Rooftop"
-    }
-  ];
+// Define mission interface
+interface DroneMission {
+  id: string;
+  status: "Completed" | "In Progress" | "Scheduled";
+  result: string;
+  timestamp: string;
+  location: string;
+}
 
+interface DroneMissionsSectionProps {
+  missions: DroneMission[];
+}
+
+export const DroneMissionsSection = ({ missions }: DroneMissionsSectionProps) => {
   return (
     <Card className="shadow-lg">
       <CardHeader>

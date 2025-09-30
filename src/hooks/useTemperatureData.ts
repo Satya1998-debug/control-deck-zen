@@ -13,7 +13,7 @@ export const useTemperatureData = () => {
       }
       return response.json();
     },
-    refetchInterval: 10000, // Refetch every 10 seconds
+    refetchInterval: 60000, // Refetch every 1 minute
     refetchIntervalInBackground: true,
     staleTime: 0, // Consider data immediately stale
     gcTime: 30000, // Keep data for 30 seconds
