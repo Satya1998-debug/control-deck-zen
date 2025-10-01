@@ -161,18 +161,17 @@ export const DigitalTwinSection = () => {
     setChatInput("");
   };
 
-  const handleDroneDiagnose = async () => {
-    console.log("sdfasfasdf");
+//   const handleDroneDiagnose = async () => {
     
-  try {
-    const response = await axios.post('http://10.0.0.7:9200/api/diagnose');
-    console.log('Drone diagnose response:', response.data);
-    // Handle success response here if needed
-  } catch (error) {
-    console.error('Error running drone diagnose:', error);
-    // Handle error here if needed
-  }
-};
+//   try {
+//     const response = await axios.post('http://10.0.0.7:9200/api/diagnose');
+//     console.log('Drone diagnose response:', response.data);
+//     // Handle success response here if needed
+//   } catch (error) {
+//     console.error('Error running drone diagnose:', error);
+//     // Handle error here if needed
+//   }
+// };
   return (
     <>
       <Card className="shadow-lg">
